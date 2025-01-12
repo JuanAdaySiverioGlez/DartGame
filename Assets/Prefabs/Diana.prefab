@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6298023369042977215}
   - component: {fileID: 2441011767463468677}
+  - component: {fileID: 3316449716907798055}
   m_Layer: 0
   m_Name: Diana
   m_TagString: Untagged
@@ -25,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2634908691095802410}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.84529316, z: -0, w: 0.53430283}
-  m_LocalPosition: {x: 3.938491, y: 0, z: 6.230882}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -35,7 +36,7 @@ Transform:
   - {fileID: 1589756682097409300}
   - {fileID: 6777510803336558435}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -115.407, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2441011767463468677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,7 +51,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCenter: {fileID: 5169153184693673725}
   targetLimitCenter: {fileID: 3643151118263963328}
-  dartboardCenter: {x: 0, y: 0, z: 0}
+  DardosEnganchadosList: {fileID: 0}
+  dartboardCenter: {x: 0, y: 0}
   bullseyeRadius: 0.034
   outerBullseyeRadius: 0.08
   tripleRingInnerRadius: 0.4
@@ -59,6 +61,27 @@ MonoBehaviour:
   doubleRingOuterRadius: 0.72
   dartboardRadius: 0.92
   darts: []
+--- !u!65 &3316449716907798055
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2634908691095802410}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.9036785, y: 1.9061286, z: 0.3962689}
+  m_Center: {x: 0.006404102, y: -0.012429833, z: -0.1437408}
 --- !u!1 &2891098459905923661
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ac633a4a8595b343a84476a5674be3b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.016
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ac633a4a8595b343a84476a5674be3b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -298,37 +321,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: -3048691505470583377, guid: 8ac633a4a8595b343a84476a5674be3b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7690054547085194807}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ac633a4a8595b343a84476a5674be3b, type: 3}
---- !u!1 &879583385082584359 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -3048691505470583377, guid: 8ac633a4a8595b343a84476a5674be3b, type: 3}
-  m_PrefabInstance: {fileID: 6450341416467042440}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &7690054547085194807
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 879583385082584359}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 53.496506, y: 53.4965, z: 2.2087004}
-  m_Center: {x: 0.00005817414, y: 0.00005054474, z: -0.43465006}
 --- !u!4 &6777510803336558435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8ac633a4a8595b343a84476a5674be3b, type: 3}

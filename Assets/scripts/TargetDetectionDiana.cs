@@ -7,7 +7,9 @@ public class TargetDetectionDiana : MonoBehaviour
     public GameObject targetCenter; // Centro de la diana
     public GameObject targetLimitCenter;
 
-    public Vector3 dartboardCenter; // Centro de la diana
+    public GameObject DardosEnganchadosList;
+
+    public Vector2 dartboardCenter; // Centro de la diana
     public float bullseyeRadius = 0.05f; // Radio del Bullseye
     public float outerBullseyeRadius = 0.1f; // Radio del Outer Bullseye
     public float tripleRingInnerRadius = 0.2f; // Radio interno del Triple
@@ -17,38 +19,50 @@ public class TargetDetectionDiana : MonoBehaviour
     public float dartboardRadius = 0.5f; // Radio total de la diana
 
     // Puntuación de cada zona de la diana en orden de derecha a izquierda
-    private int[] sectorScores = { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 }; 
+    private int[] sectorScores = { 11, 14, 9, 12, 5, 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8 };
 
     public List<Vector3> darts; // Posiciones de los dardos lanzados
 
     private void Awake()
     {
-        dartboardCenter = targetCenter.transform.position;
+        dartboardCenter = Vector2.zero;
     }
 
     void Start()
     {
-
         CalculateScores();
-
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other.name);
         // En caso de ser un dardo
         if (other.CompareTag("DART"))
         {
+            // Guarda la posición global del dardo antes de cambiar su padre
+            Vector3 globalPosition = other.transform.position;
+
+            // Cambia el padre del dardo al objeto de la diana
+            other.transform.SetParent(transform, true); // Mantiene la posición global
+
+            // Restaura la posición global del dardo para que permanezca en el punto de impacto
+            other.transform.position = new Vector3(globalPosition.x + 0.2f, globalPosition.y, globalPosition.z);
+
             // Le quitamos la gravedad y lo dejamos con velocidad 0 para que quede "clavado" en la diana
-            other.attachedRigidbody.isKinematic  = true;
-            other.attachedRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+            Rigidbody dartRigidBody = other.GetComponent<Rigidbody>();
+            if (dartRigidBody != null)
+            {
+                other.attachedRigidbody.isKinematic  = true;
+                other.attachedRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+            }
 
             // Calculamos la posicion correspondiente
             // Sumamos los puntos a añadir al puntuaje final
 
             // Obtener el punto más cercano en la superficie del objeto de la diana
-            Vector3 impactPoint = other.ClosestPoint(transform.position);
+            Vector3 impactPoint = new Vector2(other.transform.localPosition.x, other.transform.localPosition.y); //other.ClosestPoint(transform.position);
             // Fijar la posición del dardo al punto de impacto
-            transform.position = impactPoint;
+            //other.transform.position = impactPoint;
             int newScore = GetScore(impactPoint);
             Debug.Log($"El dardo en {impactPoint} obtuvo una puntuación de {newScore}.");
         }
@@ -63,32 +77,35 @@ public class TargetDetectionDiana : MonoBehaviour
         }
     }
 
-    int GetScore(Vector3 dart)
+    int GetScore(Vector2 dart)
     {
-        // Calcular distancia del dardo al centro
+        // Calcular distancia del dardo al centro de la diana
         float distance = Vector2.Distance(dart, dartboardCenter);
 
         // Centro
         if (distance <= bullseyeRadius) return 50;
+
         // Segundo Centro
         if (distance <= outerBullseyeRadius) return 25;
 
-        // Determinar en que zona cae el dardo
+        // Determinar en qué sector cae el dardo
         float angle = Mathf.Atan2(dart.y - dartboardCenter.y, dart.x - dartboardCenter.x) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360;
-        int sectorIndex = Mathf.FloorToInt(angle / 18); // Dividir el círculo en 20 sectores (18° por sector)
+
+        // Ajustar el ángulo para que coincida con el sector 20 empezando a los 9°
+        float adjustedAngle = (angle + 9) % 360;
+
+        // Calcular el índice del sector basado en el ángulo ajustado
+        int sectorIndex = Mathf.FloorToInt(adjustedAngle / 18); // 18° por sector
         int baseScore = sectorScores[sectorIndex];
+        Debug.Log(sectorIndex);
 
-        // Zona de triples
+        // Zonas de puntuación adicionales
         if (distance > tripleRingInnerRadius && distance <= tripleRingOuterRadius) return baseScore * 3;
-
-        // zona doble
         if (distance > doubleRingInnerRadius && distance <= doubleRingOuterRadius) return baseScore * 2;
-
-        // zona normal
         if (distance <= dartboardRadius) return baseScore;
 
-        // tiro fallao
+        // Fuera de la diana
         return 0;
     }
 
