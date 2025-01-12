@@ -1,0 +1,4 @@
+repository "Cardboard@VisualNovelUniverse@cloud"
+  path "/"
+    br "/main"
+    co "/main"

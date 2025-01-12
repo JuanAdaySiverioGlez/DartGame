@@ -1,0 +1,22 @@
+# Archivos de Visual Studio
+.vs/
+*.VC.opendb
+*.VC.db
+
+# Archivos temporales de Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+Logs/
+*.userprefs
+
+# Metadatos de Unity
+*.csproj
+*.unityproj
+*.sln
+*.suo
+
+# Archivos específicos del sistema
+.DS_Store
+Thumbs.db
