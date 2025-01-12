@@ -36,13 +36,21 @@ public class TargetDetectionDiana : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // En caso de ser un dardo
-        if (true)
+        if (other.CompareTag("DART"))
         {
             // Le quitamos la gravedad y lo dejamos con velocidad 0 para que quede "clavado" en la diana
+            other.attachedRigidbody.isKinematic  = true;
+            other.attachedRigidbody.constraints = RigidbodyConstraints.FreezeAll;
 
             // Calculamos la posicion correspondiente
             // Sumamos los puntos a añadir al puntuaje final
 
+            // Obtener el punto más cercano en la superficie del objeto de la diana
+            Vector3 impactPoint = other.ClosestPoint(transform.position);
+            // Fijar la posición del dardo al punto de impacto
+            transform.position = impactPoint;
+            int newScore = GetScore(impactPoint);
+            Debug.Log($"El dardo en {impactPoint} obtuvo una puntuación de {newScore}.");
         }
     }
 
