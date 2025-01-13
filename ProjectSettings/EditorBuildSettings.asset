@@ -6,7 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Samples/Google Cardboard XR Plugin for Unity/1.26.0/Hello Cardboard/Scenes/HelloCardboard.unity
-    guid: 03c48c5e809944fa4afcae9973709f26
+    path: Assets/Menu/MenuInicial.unity
+    guid: 356c6db94a1ad9d419933e4e4b59d22a
+  - enabled: 1
+    path: Assets/assetsContent/Decrepit Dungeon LITE/EXAMPLE/Demo_Scene.unity
+    guid: 14a2c64dbd956d346b9f674d144cc297
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 76edcd46a3827a44290ecc0090e59aad, type: 2}
+  m_UseUCBPForAssetBundles: 0
