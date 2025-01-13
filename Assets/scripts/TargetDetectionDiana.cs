@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TargetDetectionDiana : MonoBehaviour
 {
@@ -23,6 +24,13 @@ public class TargetDetectionDiana : MonoBehaviour
 
     public List<Vector3> darts; // Posiciones de los dardos lanzados
 
+    public TextMeshPro[] showActualLaunch;
+
+    // ================ Sistema eventos para controlar scoreBoard ================
+    public delegate void DartImpacted_EVENT(int points);
+    public event DartImpacted_EVENT DartImpacted;
+    // ===========================================================================
+
     private void Awake()
     {
         dartboardCenter = Vector2.zero;
@@ -33,12 +41,25 @@ public class TargetDetectionDiana : MonoBehaviour
         CalculateScores();
     }
 
+    private void Update()
+    {
+        if (delayBetweenLaunchs < MAX_Limit_BetweenLaunchs)
+        {
+            delayBetweenLaunchs += Time.deltaTime;
+        }
+    }
+
+    private float delayBetweenLaunchs = 0f;
+    private float MAX_Limit_BetweenLaunchs = 0.5f;
+
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.name);
         // En caso de ser un dardo
-        if (other.CompareTag("DART"))
+        if (other.CompareTag("DART") && delayBetweenLaunchs >= 0.5)
         {
+            delayBetweenLaunchs = 0.0f; // Poner limite de tiempo
+
             // Guarda la posición global del dardo antes de cambiar su padre
             Vector3 globalPosition = other.transform.position;
 
@@ -64,7 +85,21 @@ public class TargetDetectionDiana : MonoBehaviour
             // Fijar la posición del dardo al punto de impacto
             //other.transform.position = impactPoint;
             int newScore = GetScore(impactPoint);
+
+            // En caso de encestar, añadimos puntos
+            GameController.Instance.AddPointsToPlayer(newScore);
+            DartImpacted(newScore);
+
+            UpdateScorePoint(newScore); // Mostramos el puntuaje en los tablones cercanos
+
             Debug.Log($"El dardo en {impactPoint} obtuvo una puntuación de {newScore}.");
+        }
+    }
+
+    void UpdateScorePoint(int points)
+    {
+        for (int i = 0; i < showActualLaunch.Length; i++) {
+            showActualLaunch[i].text = points.ToString();
         }
     }
 
