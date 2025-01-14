@@ -19,7 +19,7 @@ public class MovimientoDemonio : MonoBehaviour {
                     Vector3 direction = (puntos[i].position - transform.position).normalized;
                     Quaternion lookRotation = Quaternion.LookRotation(direction);
                     transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-                    transform.position = Vector3.MoveTowards(transform.position, puntos[i].position, 0.05f);
+                    transform.position = Vector3.MoveTowards(transform.position, puntos[i].position, 0.1f);
                     yield return new WaitForSeconds(0.01f);
                 }
                 yield return new WaitForSeconds(0.01f);
