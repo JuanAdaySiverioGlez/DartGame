@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    // Propiedad estática para el Singleton.
+    // Propiedad estï¿½tica para el Singleton.
     public static GameController Instance { get; private set; }
 
-    // Modo de juego (0: Típico, 1: Otro modo, etc.).
+    // Modo de juego (0: Tï¿½pico, 1: Otro modo, etc.).
     public int GameMode = 0;
 
     // Jugadores y sus puntos.
@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
     public List<int> playersPoints;
 
     // Variables del turno.
-    public int actualTurn = 0; // Jugador actual (índice).
+    public int actualTurn = 0; // Jugador actual (ï¿½ndice).
     public int dardosLanzados = 0;
 
     // Estados del juego.
@@ -32,7 +32,11 @@ public class GameController : MonoBehaviour
     public delegate void ResetGame_EVENT(int newPlayers);
     public event ResetGame_EVENT ResetGame;
     // ===========================================================================
-
+    public CartelJugadores cartel;
+    public void UpdatePlayerNumber(int newPlayers)
+    {
+        playersPlaying = newPlayers;
+    }
 
 
     private void Awake()
@@ -50,10 +54,11 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        InitializeNewGame(2);
+        cartel.CartelEvent += UpdatePlayerNumber;
+        InitializeNewGame(playersPlaying);
     }
 
-    // Inicializar un nuevo juego con un número dado de jugadores.
+    // Inicializar un nuevo juego con un nï¿½mero dado de jugadores.
     public void InitializeNewGame(int newPlayers)
     {
         playersPlaying = newPlayers;
@@ -73,7 +78,7 @@ public class GameController : MonoBehaviour
         ResetGame(newPlayers);
     }
 
-    // Método para avanzar al siguiente estado.
+    // Mï¿½todo para avanzar al siguiente estado.
     public void LaunchDart()
     {
         switch (currentState)

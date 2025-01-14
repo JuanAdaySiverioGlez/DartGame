@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Comenzar : MonoBehaviour
+public class SalirJuego : MonoBehaviour
 {
   private bool lookingAtThis;
   void Update()
   {
     if (lookingAtThis && Input.GetButtonDown("BotonX")) {
-      Debug.Log("Comenzar 2");
-      SceneManager.LoadScene("Demo_Scene");
+      Debug.Log("Exiting");
+      Application.Quit();
     }
   }
   // public void OnPointerClick()
