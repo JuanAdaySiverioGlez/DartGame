@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // Necesario para usar UI como Slider
 
 public class DartThrowWithSpawn : MonoBehaviour {
     public Transform cameraTransform; // Referencia a la cámara del jugador
@@ -15,11 +16,22 @@ public class DartThrowWithSpawn : MonoBehaviour {
     private GameObject currentDart; // Dardo actual que sigue la cámara
     private float currentForce = 0f; // Fuerza acumulada
     private bool isCharging = false; // Indica si se está cargando la fuerza
+    private bool isIncreasing = true; // Controla si la fuerza está aumentando o disminuyendo
+
+    public Slider forceSlider; // Referencia al slider del HUD para la barra de carga
 
     void Start()
     {
         // Generar el primer dardo al iniciar el juego
         SpawnNewDart();
+
+        // Inicializar el slider con el valor mínimo
+        if (forceSlider != null)
+        {
+            forceSlider.minValue = 0f;
+            forceSlider.maxValue = maxForce;
+            forceSlider.value = 0f; // Empezamos con la barra vacía
+        }
     }
 
     void Update()
@@ -33,17 +45,45 @@ public class DartThrowWithSpawn : MonoBehaviour {
         }
 
         // Cargar fuerza al presionar el botón
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)) // EN VEZ DEL BOTON "SPACE" BOTON DEL HUD
         {
+            // Poner la barra en el HUD subiendo y bajando !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
             isCharging = true;
             currentForce = 0f;
+            isIncreasing = true; // Comienza a incrementar la fuerza
         }
 
-        // Incrementar la fuerza mientras se mantiene presionado el botón
+        // Incrementar o disminuir la fuerza mientras se mantiene presionado el botón
         if (isCharging && Input.GetKey(KeyCode.Space))
         {
-            currentForce += chargeRate * Time.deltaTime;
+            if (isIncreasing)
+            {
+                currentForce += chargeRate * Time.deltaTime;
+                if (currentForce >= maxForce)
+                {
+                    // Si alcanza el máximo, comienza a disminuir la fuerza
+                    isIncreasing = false;
+                }
+            }
+            else
+            {
+                currentForce -= chargeRate * Time.deltaTime;
+                if (currentForce <= 0f)
+                {
+                    // Si llega a 0, empieza a aumentar de nuevo
+                    isIncreasing = true;
+                }
+            }
+
+            // Asegurar que la fuerza se mantenga entre 0 y maxForce
             currentForce = Mathf.Clamp(currentForce, 0f, maxForce);
+
+            // Actualizar el slider con el valor de la fuerza
+            if (forceSlider != null)
+            {
+                forceSlider.value = currentForce;
+            }
         }
 
         // Lanzar el dardo al soltar el botón
@@ -52,6 +92,12 @@ public class DartThrowWithSpawn : MonoBehaviour {
             isCharging = false;
             ThrowDart(currentForce);
             currentForce = 0f;
+
+            // Restablecer el slider después de lanzar el dardo
+            if (forceSlider != null)
+            {
+                forceSlider.value = 0f;
+            }
         }
     }
 
@@ -65,10 +111,13 @@ public class DartThrowWithSpawn : MonoBehaviour {
             {
                 rb.isKinematic = false; // Activar física
                 rb.AddForce(cameraTransform.forward * force, ForceMode.Impulse);
+                // Añadimos que hemos lanzado un dardo más
+                GameController.Instance.LaunchDart();
             }
-
             currentDart = null; // Eliminar referencia al dardo actual
-            Invoke(nameof(SpawnNewDart), 0.2f); // Generar un nuevo dardo después de lanzar
+
+
+            Invoke(nameof(SpawnNewDart), 0.5f); // Generar un nuevo dardo después de lanzar
         }
     }
 

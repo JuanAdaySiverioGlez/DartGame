@@ -1,0 +1,115 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GameController : MonoBehaviour
+{
+    // Propiedad estática para el Singleton.
+    public static GameController Instance { get; private set; }
+
+    // Modo de juego (0: Típico, 1: Otro modo, etc.).
+    public int GameMode = 0;
+
+    // Jugadores y sus puntos.
+    public int playersPlaying = 1;
+    public List<int> playersPoints;
+
+    // Variables del turno.
+    public int actualTurn = 0; // Jugador actual (índice).
+    public int dardosLanzados = 0;
+
+    // Estados del juego.
+    public enum GameState { ThrowingDarts, NextTurn }
+    public GameState currentState = GameState.ThrowingDarts;
+
+    // ================ Sistema eventos para controlar scoreBoard ================
+    public delegate void NextPlayer_EVENT(int player);
+    public event NextPlayer_EVENT NextPlayer;
+
+    public delegate void NewRound_EVENT();
+    public event NewRound_EVENT NextRound;
+
+    public delegate void ResetGame_EVENT(int newPlayers);
+    public event ResetGame_EVENT ResetGame;
+    // ===========================================================================
+
+
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
+        InitializeNewGame(2);
+    }
+
+    // Inicializar un nuevo juego con un número dado de jugadores.
+    public void InitializeNewGame(int newPlayers)
+    {
+        playersPlaying = newPlayers;
+        playersPoints = new List<int>();
+
+        // Inicializar puntos a 0 para cada jugador.
+        for (int i = 0; i < playersPlaying; i++)
+        {
+            playersPoints.Add(0);
+        }
+
+        // Reiniciar variables del turno.
+        actualTurn = 0;
+        dardosLanzados = 0;
+        currentState = GameState.ThrowingDarts;
+
+        ResetGame(newPlayers);
+    }
+
+    // Método para avanzar al siguiente estado.
+    public void LaunchDart()
+    {
+        switch (currentState)
+        {
+            case GameState.ThrowingDarts:
+                dardosLanzados++;
+                if (dardosLanzados >= 2)
+                {
+                    currentState = GameState.NextTurn;
+                    dardosLanzados = 0;
+                }
+                break;
+
+            case GameState.NextTurn:
+                actualTurn = (actualTurn + 1) % playersPlaying; // Avanzar al siguiente jugador.
+                if (actualTurn == 0) // Es nueva ronda
+                {
+                    NextRound();
+                } else
+                {
+                    NextPlayer(actualTurn); // Evento para indicar a todos que ahora toca el siguiente jugador
+                }
+                currentState = GameState.ThrowingDarts;
+                break;
+        }
+    }
+
+    public void AddPointsToPlayer(int points)
+    {
+        if (actualTurn < playersPoints.Count)
+        {
+            playersPoints[actualTurn] += points;
+        }
+    }
+
+
+    
+
+}
