@@ -11,9 +11,12 @@ public class ScoreBoardController : MonoBehaviour
     public TextMeshPro[] actualTurn; // Puntos ordenados de los jugadores
 
     public TargetDetectionDiana diana;
+    private int pointsToWin = 0;
 
     private void Start()
     {
+        ResetGame(GameController.Instance.playersPlaying);
+        pointsToWin = GameController.Instance.GetPointsToWin();
         GameController.Instance.NextPlayer += NextPlayer;
         GameController.Instance.NextRound += NewRound;
         GameController.Instance.ResetGame += ResetGame;
@@ -35,8 +38,14 @@ public class ScoreBoardController : MonoBehaviour
         int actualTotalPoints, actualRoundPoints;
         int.TryParse(totalPointsByPlayer[player].text, out actualTotalPoints);
         int.TryParse(roundPointsByPlayer[player].text, out actualRoundPoints);
-        totalPointsByPlayer[player].text = (actualTotalPoints + newPoints).ToString();
-        roundPointsByPlayer[player].text = (actualRoundPoints + newPoints).ToString();
+        if (actualTotalPoints + newPoints > pointsToWin)
+        {
+            totalPointsByPlayer[player].text = (actualTotalPoints).ToString();
+            roundPointsByPlayer[player].text = "0";
+        } else {
+            totalPointsByPlayer[player].text = (actualTotalPoints + newPoints).ToString();
+            roundPointsByPlayer[player].text = (actualRoundPoints + newPoints).ToString();
+        }
     }
 
     public void NextPlayer(int nextPlayer)

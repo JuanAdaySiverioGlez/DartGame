@@ -7,7 +7,7 @@ public class ActualizarTexto : MonoBehaviour
 {
     public CartelJugadores cartel;
     private int playersPlaying = 1;
-    private Text text;
+    private Text text; 
 
     void Start()
     {

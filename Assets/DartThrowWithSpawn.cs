@@ -4,19 +4,19 @@ using UnityEngine;
 using UnityEngine.UI; // Necesario para usar UI como Slider
 
 public class DartThrowWithSpawn : MonoBehaviour {
-    public Transform cameraTransform; // Referencia a la cámara del jugador
+    public Transform cameraTransform; // Referencia a la cï¿½mara del jugador
     public GameObject dartPrefab; // Prefab del dardo
-    public Transform spawnOffset; // Offset delante de la cámara para crear el dardo
-    public float maxForce = 20f; // Fuerza máxima del lanzamiento
+    public Transform spawnOffset; // Offset delante de la cï¿½mara para crear el dardo
+    public float maxForce = 20f; // Fuerza mï¿½xima del lanzamiento
     public float chargeRate = 10f; // Velocidad de carga de la fuerza
 
-    public Vector3 dartScale = new Vector3(0.5f, 0.5f, -1f); // Tamaño del dardo al instanciarlo
-    public Vector3 dartRotation = new Vector3(0f, 180f, 0f); // Rotación adicional del dardo
+    public Vector3 dartScale = new Vector3(0.5f, 0.5f, -1f); // Tamaï¿½o del dardo al instanciarlo
+    public Vector3 dartRotation = new Vector3(0f, 180f, 0f); // Rotaciï¿½n adicional del dardo
 
-    private GameObject currentDart; // Dardo actual que sigue la cámara
+    private GameObject currentDart; // Dardo actual que sigue la cï¿½mara
     private float currentForce = 0f; // Fuerza acumulada
-    private bool isCharging = false; // Indica si se está cargando la fuerza
-    private bool isIncreasing = true; // Controla si la fuerza está aumentando o disminuyendo
+    private bool isCharging = false; // Indica si se estï¿½ cargando la fuerza
+    private bool isIncreasing = true; // Controla si la fuerza estï¿½ aumentando o disminuyendo
 
     public Slider forceSlider; // Referencia al slider del HUD para la barra de carga
 
@@ -25,18 +25,18 @@ public class DartThrowWithSpawn : MonoBehaviour {
         // Generar el primer dardo al iniciar el juego
         SpawnNewDart();
 
-        // Inicializar el slider con el valor mínimo
+        // Inicializar el slider con el valor mï¿½nimo
         if (forceSlider != null)
         {
             forceSlider.minValue = 0f;
             forceSlider.maxValue = maxForce;
-            forceSlider.value = 0f; // Empezamos con la barra vacía
+            forceSlider.value = 0f; // Empezamos con la barra vacï¿½a
         }
     }
 
     void Update()
     {
-        // Si hay un dardo activo, sigue la posición y orientación de la cámara
+        // Si hay un dardo activo, sigue la posiciï¿½n y orientaciï¿½n de la cï¿½mara
         if (currentDart != null)
         {
             currentDart.transform.position = spawnOffset.position;
@@ -44,8 +44,8 @@ public class DartThrowWithSpawn : MonoBehaviour {
 
         }
 
-        // Cargar fuerza al presionar el botón
-        if (Input.GetKeyDown(KeyCode.Space)) // EN VEZ DEL BOTON "SPACE" BOTON DEL HUD
+        // Cargar fuerza al presionar el botï¿½n
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("BotonX")) // Boton X del mando
         {
             // Poner la barra en el HUD subiendo y bajando !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -54,15 +54,15 @@ public class DartThrowWithSpawn : MonoBehaviour {
             isIncreasing = true; // Comienza a incrementar la fuerza
         }
 
-        // Incrementar o disminuir la fuerza mientras se mantiene presionado el botón
-        if (isCharging && Input.GetKey(KeyCode.Space))
+        // Incrementar o disminuir la fuerza mientras se mantiene presionado el botï¿½n
+        if (isCharging && (Input.GetKey(KeyCode.Space) || Input.GetButton("BotonX") || Input.GetKey(KeyCode.JoystickButton0))) // Boton X del mando
         {
             if (isIncreasing)
             {
                 currentForce += chargeRate * Time.deltaTime;
                 if (currentForce >= maxForce)
                 {
-                    // Si alcanza el máximo, comienza a disminuir la fuerza
+                    // Si alcanza el mï¿½ximo, comienza a disminuir la fuerza
                     isIncreasing = false;
                 }
             }
@@ -86,14 +86,14 @@ public class DartThrowWithSpawn : MonoBehaviour {
             }
         }
 
-        // Lanzar el dardo al soltar el botón
-        if (isCharging && Input.GetKeyUp(KeyCode.Space))
+        // Lanzar el dardo al soltar el botï¿½n
+        if (isCharging && Input.GetKeyUp(KeyCode.Space) || Input.GetButtonUp("BotonX"))
         {
             isCharging = false;
             ThrowDart(currentForce);
             currentForce = 0f;
 
-            // Restablecer el slider después de lanzar el dardo
+            // Restablecer el slider despuï¿½s de lanzar el dardo
             if (forceSlider != null)
             {
                 forceSlider.value = 0f;
@@ -105,32 +105,31 @@ public class DartThrowWithSpawn : MonoBehaviour {
     {
         if (currentDart != null)
         {
-            // Hacer que el dardo sea independiente de la cámara
+            // Hacer que el dardo sea independiente de la cï¿½mara
             Rigidbody rb = currentDart.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.isKinematic = false; // Activar física
+                rb.isKinematic = false; // Activar fï¿½sica
                 rb.AddForce(cameraTransform.forward * force, ForceMode.Impulse);
-                // Añadimos que hemos lanzado un dardo más
+                // Aï¿½adimos que hemos lanzado un dardo mï¿½s
                 GameController.Instance.LaunchDart();
             }
             currentDart = null; // Eliminar referencia al dardo actual
 
-
-            Invoke(nameof(SpawnNewDart), 0.5f); // Generar un nuevo dardo después de lanzar
+            Invoke(nameof(SpawnNewDart), 0.5f); // Generar un nuevo dardo despuï¿½s de lanzar
         }
     }
 
     void SpawnNewDart()
     {
-        // Crear un nuevo dardo en el offset delante de la cámara
+        // Crear un nuevo dardo en el offset delante de la cï¿½mara
         currentDart = Instantiate(dartPrefab, spawnOffset.position, cameraTransform.rotation);
 
-        // Asegurarse de que el Rigidbody esté en modo kinematic hasta que se lance
+        // Asegurarse de que el Rigidbody estï¿½ en modo kinematic hasta que se lance
         Rigidbody rb = currentDart.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.isKinematic = true; // Desactivar física hasta que se lance
+            rb.isKinematic = true; // Desactivar fï¿½sica hasta que se lance
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -32,12 +33,11 @@ public class GameController : MonoBehaviour
     public delegate void ResetGame_EVENT(int newPlayers);
     public event ResetGame_EVENT ResetGame;
     // ===========================================================================
-    public CartelJugadores cartel;
-    public void UpdatePlayerNumber(int newPlayers)
-    {
-        playersPlaying = newPlayers;
-    }
-
+    public CartelJugadores[] cartel;
+    [SerializeField] private int pointsToWin = 301;
+    public int GetPointsToWin() { return pointsToWin; }
+    public void UpdatePlayerNumber(int newPlayers) { playersPlaying = newPlayers; }
+    // ===========================================================================
 
     private void Awake()
     {
@@ -45,6 +45,7 @@ public class GameController : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -54,8 +55,16 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        cartel.CartelEvent += UpdatePlayerNumber;
+        for (int i = 0; i < cartel.Length; i++)
+        {
+            cartel[i].CartelEvent += UpdatePlayerNumber;
+        }
         InitializeNewGame(playersPlaying);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeNewGame(playersPlaying); // Inicializar el juego cuando se carga una nueva escena
     }
 
     // Inicializar un nuevo juego con un n�mero dado de jugadores.
@@ -111,10 +120,16 @@ public class GameController : MonoBehaviour
         if (actualTurn < playersPoints.Count)
         {
             playersPoints[actualTurn] += points;
+            if (playersPoints[actualTurn] == pointsToWin)
+            {
+                Debug.Log("Player " + actualTurn + " wins!");
+                SceneManager.LoadScene("MenuInicial");
+            } else if (playersPoints[actualTurn] > pointsToWin)
+            {
+                Debug.Log("Player " + actualTurn + " needs to close cleanly.");
+                playersPoints[actualTurn] -= points;
+            }
         }
     }
-
-
-    
 
 }

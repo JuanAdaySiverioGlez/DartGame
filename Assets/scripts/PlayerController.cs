@@ -16,9 +16,4 @@ public class PlayerController : MonoBehaviour
         return points;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

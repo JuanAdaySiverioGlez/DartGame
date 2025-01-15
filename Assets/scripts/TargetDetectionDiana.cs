@@ -19,7 +19,7 @@ public class TargetDetectionDiana : MonoBehaviour
     public float doubleRingOuterRadius = 0.45f; // Radio externo del Doble
     public float dartboardRadius = 0.5f; // Radio total de la diana
 
-    // Puntuación de cada zona de la diana en orden de derecha a izquierda
+    // Puntuaciï¿½n de cada zona de la diana en orden de derecha a izquierda
     private int[] sectorScores = { 11, 14, 9, 12, 5, 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8 };
 
     public List<Vector3> darts; // Posiciones de los dardos lanzados
@@ -51,6 +51,7 @@ public class TargetDetectionDiana : MonoBehaviour
 
     private float delayBetweenLaunchs = 0f;
     private float MAX_Limit_BetweenLaunchs = 0.5f;
+    private int numberOfDarts = 0;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -60,13 +61,13 @@ public class TargetDetectionDiana : MonoBehaviour
         {
             delayBetweenLaunchs = 0.0f; // Poner limite de tiempo
 
-            // Guarda la posición global del dardo antes de cambiar su padre
+            // Guarda la posiciï¿½n global del dardo antes de cambiar su padre
             Vector3 globalPosition = other.transform.position;
 
             // Cambia el padre del dardo al objeto de la diana
-            other.transform.SetParent(transform, true); // Mantiene la posición global
+            other.transform.SetParent(transform, true); // Mantiene la posiciï¿½n global
 
-            // Restaura la posición global del dardo para que permanezca en el punto de impacto
+            // Restaura la posiciï¿½n global del dardo para que permanezca en el punto de impacto
             other.transform.position = new Vector3(globalPosition.x + 0.2f, globalPosition.y, globalPosition.z);
 
             // Le quitamos la gravedad y lo dejamos con velocidad 0 para que quede "clavado" en la diana
@@ -78,21 +79,35 @@ public class TargetDetectionDiana : MonoBehaviour
             }
 
             // Calculamos la posicion correspondiente
-            // Sumamos los puntos a añadir al puntuaje final
+            // Sumamos los puntos a aï¿½adir al puntuaje final
 
-            // Obtener el punto más cercano en la superficie del objeto de la diana
+            // Obtener el punto mï¿½s cercano en la superficie del objeto de la diana
             Vector3 impactPoint = new Vector2(other.transform.localPosition.x, other.transform.localPosition.y); //other.ClosestPoint(transform.position);
-            // Fijar la posición del dardo al punto de impacto
+            // Fijar la posiciï¿½n del dardo al punto de impacto
             //other.transform.position = impactPoint;
             int newScore = GetScore(impactPoint);
 
-            // En caso de encestar, añadimos puntos
+            // En caso de encestar, aï¿½adimos puntos
             GameController.Instance.AddPointsToPlayer(newScore);
             DartImpacted(newScore);
 
             UpdateScorePoint(newScore); // Mostramos el puntuaje en los tablones cercanos
 
-            Debug.Log($"El dardo en {impactPoint} obtuvo una puntuación de {newScore}.");
+            Debug.Log($"El dardo en {impactPoint} obtuvo una puntuaciï¿½n de {newScore}.");
+            
+            // Sumamos 1 a el numero de dardos impactados
+            numberOfDarts++;
+            if (numberOfDarts == 3)
+            {
+                foreach (Transform child in transform)
+                {
+                    if (child.CompareTag("DART"))
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+                numberOfDarts = 0; // Reiniciamos el contador
+            }
         }
     }
 
@@ -108,7 +123,7 @@ public class TargetDetectionDiana : MonoBehaviour
         foreach (Vector3 dart in darts)
         {
             int score = GetScore(dart);
-            Debug.Log($"El dardo en {dart} obtuvo una puntuación de {score}.");
+            Debug.Log($"El dardo en {dart} obtuvo una puntuaciï¿½n de {score}.");
         }
     }
 
@@ -123,19 +138,19 @@ public class TargetDetectionDiana : MonoBehaviour
         // Segundo Centro
         if (distance <= outerBullseyeRadius) return 25;
 
-        // Determinar en qué sector cae el dardo
+        // Determinar en quï¿½ sector cae el dardo
         float angle = Mathf.Atan2(dart.y - dartboardCenter.y, dart.x - dartboardCenter.x) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360;
 
-        // Ajustar el ángulo para que coincida con el sector 20 empezando a los 9°
+        // Ajustar el ï¿½ngulo para que coincida con el sector 20 empezando a los 9ï¿½
         float adjustedAngle = (angle + 9) % 360;
 
-        // Calcular el índice del sector basado en el ángulo ajustado
-        int sectorIndex = Mathf.FloorToInt(adjustedAngle / 18); // 18° por sector
+        // Calcular el ï¿½ndice del sector basado en el ï¿½ngulo ajustado
+        int sectorIndex = Mathf.FloorToInt(adjustedAngle / 18); // 18ï¿½ por sector
         int baseScore = sectorScores[sectorIndex];
         Debug.Log(sectorIndex);
 
-        // Zonas de puntuación adicionales
+        // Zonas de puntuaciï¿½n adicionales
         if (distance > tripleRingInnerRadius && distance <= tripleRingOuterRadius) return baseScore * 3;
         if (distance > doubleRingInnerRadius && distance <= doubleRingOuterRadius) return baseScore * 2;
         if (distance <= dartboardRadius) return baseScore;
