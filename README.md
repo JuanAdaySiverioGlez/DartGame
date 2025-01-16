@@ -23,7 +23,9 @@ Al igual que las otras opciones, para salir del juego vamos a pulsar sobre dicho
 
 ## Funcionamiento del Juego de los Dardos
 
-El juego de los dardos implementado sigue una lógica por turnos, donde los jugadores deben lanzar dardos, acumular puntos y turnarse para continuar el juego hasta que se cumplan las condiciones definidas. A continuación, se detalla el funcionamiento del sistema:
+El juego de los dardos implementado sigue una lógica por turnos, donde los jugadores deben lanzar dardos, acumular puntos y turnarse para continuar el juego hasta que se cumplan las condiciones definidas. A continuación, se detalla el funcionamiento del sistema.
+
+![Interfaz Inteligente](gifInterfacesInteligentes.gif)
 
 ### Inicio del Juego
 Cuando se inicia el juego, se inicializa un controlador general (`GameController`) que se encarga de gestionar todas las acciones principales. Este controlador establece las reglas del juego, organiza los turnos de los jugadores, administra las puntuaciones y lanza eventos que informan sobre los cambios de estado en el juego.
